@@ -10,20 +10,34 @@ public class Frog : MonoBehaviour
     [SerializeField] private float JumpLength;
     [SerializeField] private float JumpHeight;
     [SerializeField] private LayerMask ground;
+
     private Collider2D coll;
     private Rigidbody2D RB;
+    private Animator Animation;
 
     private bool FacingLeft = true;
     private void Start()
     {
         coll = GetComponent<Collider2D>();
         RB = GetComponent<Rigidbody2D>();
+        Animation = GetComponent<Animator>();
     }
 
 
     private void Update()
     {
-       
+       if(Animation.GetBool("Jumping"))
+        {
+            if(RB.velocity.y < .1)
+            {
+                Animation.SetBool("Falling", true);
+                Animation.SetBool("Jumping", false);
+            }
+        }
+       if(coll.IsTouchingLayers(ground) && Animation.GetBool("Falling"))
+        {
+            Animation.SetBool("Falling", false);
+        }
     }
 
     private void Move()
@@ -37,6 +51,7 @@ public class Frog : MonoBehaviour
                 if (coll.IsTouchingLayers(ground))
                 {
                     RB.velocity = new Vector2(-JumpLength, JumpHeight);
+                    Animation.SetBool("Jumping", true);
 
                     transform.localScale = new Vector3(1, 1);
                 }
@@ -56,6 +71,7 @@ public class Frog : MonoBehaviour
                 if (coll.IsTouchingLayers(ground))
                 {
                     RB.velocity = new Vector2(JumpLength, JumpHeight);
+                    Animation.SetBool("Jumping", true);
 
                     transform.localScale = new Vector3(-1, 1);
                 }
