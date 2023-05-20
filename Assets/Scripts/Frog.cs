@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Frog : MonoBehaviour
+public class Frog : Enemy
 {
     [SerializeField] private float LeftCap;
     [SerializeField] private float RightCap;
@@ -13,14 +13,13 @@ public class Frog : MonoBehaviour
 
     private Collider2D coll;
     private Rigidbody2D RB;
-    private Animator Animation;
 
     private bool FacingLeft = true;
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         coll = GetComponent<Collider2D>();
         RB = GetComponent<Rigidbody2D>();
-        Animation = GetComponent<Animator>();
     }
 
 

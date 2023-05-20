@@ -54,10 +54,12 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Enemy")
+        {
 
-            if(state == State.falling)
+            Enemy enemy = other.gameObject.GetComponent<Enemy>();
+            if (state == State.falling)
             {
-                Destroy(other.gameObject);
+                enemy.JumpedOn();
                 Jump();
             }
             else
@@ -73,8 +75,8 @@ public class PlayerController : MonoBehaviour
                     //Enemy is to my left and therefore i should be damaged and moved right
                     RB.velocity = new Vector2(Damage, RB.velocity.y);
                 }
-            }                
-        
+            }
+        }
     }
 
 
