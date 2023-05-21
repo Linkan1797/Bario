@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     private Collider2D Coll;
 
     //FSM
-    private enum State {idle, running, jumping, falling, hurt}
+    private enum State { idle, running, jumping, falling, hurt }
     private State state = State.idle;
 
     //Inspector variabler
@@ -22,12 +22,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int Cherries = 0;
     [SerializeField] private Text CherriesText;
     [SerializeField] private float Damage = 10f;
+    [SerializeField] private AudioSource Cherry;
+    [SerializeField] private AudioSource Footstep;
 
     private void Start()
     {
         RB = GetComponent<Rigidbody2D>();
         Animation = GetComponent<Animator>();
-        Coll = GetComponent<Collider2D>();
+        Coll = GetComponent<BoxCollider2D>();
     }
 
     private void Update()
@@ -43,8 +45,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Collectable")
+        if (collision.tag == "Collectable")
         {
+            Cherry.Play();
             Destroy(collision.gameObject);
             Cherries += 1;
             CherriesText.text = Cherries.ToString();
@@ -109,7 +112,12 @@ public class PlayerController : MonoBehaviour
         RB.velocity = new Vector2(RB.velocity.x, jumpforce);
         state = State.jumping;
     }
-       
+
+    private void Footsteps()
+    {
+        Footstep.Play();
+    }
+
 
     private void VelocityState()
     {
@@ -122,14 +130,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (state == State.falling)
         {
-            if(Coll.IsTouchingLayers(ground))
+            if (Coll.IsTouchingLayers(ground))
             {
                 state = State.idle;
             }
         }
         else if (state == State.hurt)
         {
-            if(Mathf.Abs(RB.velocity.x) < .1f)
+            if (Mathf.Abs(RB.velocity.x) < .1f)
             {
                 state = State.idle;
             }
@@ -137,7 +145,7 @@ public class PlayerController : MonoBehaviour
 
         else if (Mathf.Abs(RB.velocity.x) > 2f)
         {
-           //Running
+            //Running
             state = State.running;
         }
 
@@ -146,4 +154,5 @@ public class PlayerController : MonoBehaviour
             state = State.idle;
         }
     }
+    
 }
