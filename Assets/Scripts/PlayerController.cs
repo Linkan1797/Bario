@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,10 +18,10 @@ public class PlayerController : MonoBehaviour
 
     //Inspector variabler
     [SerializeField] private LayerMask ground;
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 9f;
     [SerializeField] private float jumpforce = 20f;
     [SerializeField] private int Cherries = 0;
-    [SerializeField] private Text CherriesText;
+    [SerializeField] private TextMeshProUGUI CherriesText;
     [SerializeField] private float Damage = 10f;
     [SerializeField] private AudioSource Cherry;
     [SerializeField] private AudioSource Footstep;
@@ -45,12 +46,20 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Collectable")
+        if(collision.tag == "Collectable")
         {
             Cherry.Play();
             Destroy(collision.gameObject);
             Cherries += 1;
             CherriesText.text = Cherries.ToString();
+        }
+        if(collision.tag == "PowerUp")
+        {
+            Destroy(collision.gameObject);
+            jumpforce += 10;
+            speed += 2;
+            GetComponent<SpriteRenderer>().color = Color.yellow;
+            StartCoroutine(ResetPower());
         }
     }
 
@@ -82,6 +91,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private IEnumerator ResetPower()
+    {
+        yield return new WaitForSeconds(10);
+        jumpforce = 20;
+        speed = 9;
+        GetComponent<SpriteRenderer>().color = Color.white;
+    }
 
     private void Movement()
     {
@@ -154,5 +170,4 @@ public class PlayerController : MonoBehaviour
             state = State.idle;
         }
     }
-    
 }
